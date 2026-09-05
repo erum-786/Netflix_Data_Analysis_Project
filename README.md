@@ -1,5 +1,5 @@
 # 🎬 Netflix_Data_Analysis_Project
-
+<img src= "https://upload.wikimedia.org/wikipedia/commons/f/fd/Netflix-Logo.png?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original" height="255" width = "1000">
 
 ## 📌 Project Overview
 
@@ -67,88 +67,162 @@ CREATE TABLE netflix
 The project answers the following **15 business questions**:
 
 ### 1. Movies vs TV Shows
-
 Calculate the total number of Movies and TV Shows available on Netflix.
 ```sql
 SELECT type,
 		count(show_id) AS total_content
 FROM netflix
 GROUP BY type;
-
 ```
 
 ### 2. Most Common Rating
-
 Identify the most common rating for Movies and TV Shows using a **CTE and ROW_NUMBER() window function**.
+```sql
+WITH C1 AS(
+	SELECT type, rating, 
+			COUNT(rating) AS count,
+			ROW_NUMBER() OVER(PARTITION BY type order by count(rating) DESC) AS RANK
+	FROM netflix
+	GROUP BY type, rating
+	ORDER BY type, COUNT(rating) desc
+)
+SELECT type, rating, count
+FROM C1 
+WHERE rank = 1;
+```
 
 ### 3. Movies Released in a Specific Year
-
 Find all movies released in a particular year, such as 2020.
+```sql
+SELECT title
+FROM netflix
+WHERE release_year = 2020 and type = 'Movie';
+```
 
 ### 4. Top 5 Countries
-
 Identify the top 5 countries producing the highest number of Netflix content items.
-
-The analysis uses PostgreSQL string functions including `STRING_TO_ARRAY()` and `UNNEST()`.
+```sql
+SELECT TRIM(UNNEST(STRING_TO_ARRAY(country, ','))) AS country1,
+		COUNT(show_id) AS count
+FROM netflix
+GROUP BY 1
+ORDER BY count DESC
+LIMIT 5
+```
 
 ### 5. Longest Movie
-
-Identify the longest movie available on Netflix by extracting the numerical duration value.
+Identify the longest movie available on Netflix.
+```sql
+SELECT title, duration
+FROM netflix
+WHERE type = 'Movie' and 
+	duration = CONCAT(
+			(SELECT MAX((SPLIT_PART(duration, ' ', 1)):: INTEGER)
+			FROM netflix
+			WHERE type = 'Movie'), ' min')
+```
 
 ### 6. Content Added in the Last 5 Years
-
 Find Netflix content added within the last five years using PostgreSQL date and interval functions.
+```sql
+SELECT *
+FROM netflix
+WHERE date_added >= CURRENT_DATE - INTERVAL '5 YEARS'
+```
 
 ### 7. Content by a Specific Director
-
 Find all movies and TV shows associated with director **Rajiv Chilaka**.
-
-The project demonstrates two approaches:
-
-* `UNNEST()` with `STRING_TO_ARRAY()`
-* `ILIKE` pattern matching
+```sql
+SELECT * FROM netflix
+WHERE director ILIKE '%Rajiv Chilaka%'
+```
 
 ### 8. TV Shows With More Than 5 Seasons
-
 Identify TV shows having more than five seasons using string manipulation and type conversion.
+```sql
+SELECT title, duration
+FROM netflix 
+WHERE type = 'TV Show' AND SPLIT_PART(duration, ' ', 1)::INTEGER >5
+```
 
 ### 9. Content by Genre
-
 Calculate the number of Netflix content items available in each genre.
+```sql
+SELECT TRIM(UNNEST(STRING_TO_ARRAY(listed_in, ','))) AS genre,
+	COUNT(show_id) AS total_content
+FROM NETFLIX
+GROUP BY 1
+```
 
 ### 10. India's Content Analysis
-
 Analyze Netflix content associated with India and identify the top 5 years based on average content release.
+```sql
+SELECT 
+		-- *
+		EXTRACT(YEAR FROM date_added)
+		, ROUND(1.0*COUNT(*)/ (SELECT COUNT(*) FROM netflix WHERE country ILIKE '%India%'),2) AS avg_content
+FROM netflix
+WHERE country ILIKE '%India%'
+GROUP BY 1
+ORDER BY 2 DESC
+LIMIT 5
+```
 
 ### 11. Documentary Movies
-
 Identify movies categorized as documentaries.
+```sql
+SELECT *
+FROM netflix 
+WHERE type = 'Movie' AND listed_in ILIKE '%Documentaries'
+```
 
 ### 12. Missing Director Information
-
-Find all Netflix content where the director information is missing (`NULL`).
+Find all Netflix content where the director information is missing.
+```sql
+SELECT * FROM netflix
+WHERE director IS NULL
+```
 
 ### 13. Salman Khan Movies
-
 Identify movies featuring **Salman Khan** released within the last 15 years.
+```sql
+SELECT *
+FROM netflix 
+WHERE casts ILIKE '%Salman Khan%' AND release_year > EXTRACT(YEAR FROM CURRENT_DATE)- 15
+```
 
 ### 14. Top 10 Actors in Indian Movies
-
 Find the top 10 actors who appeared in the highest number of movies produced in India.
+```sql
+SELECT TRIM(UNNEST(STRING_TO_ARRAY(casts, ','))) AS actor
+		, COUNT(*) AS count_of_appeared_in
+FROM netflix
+WHERE country ILIKE '%India%' and type = 'Movie'
+GROUP BY 1
+ORDER BY 2 DESC
+LIMIT 10
+```
 
 ### 15. Content Categorization
-
 Categorize Netflix content as:
 
 * **Bad** – description contains keywords such as `kill` or `violence`
 * **Good** – all other content
-
-A `CASE` expression and CTE are used to perform this classification.
-
+```sql
+WITH label_data AS
+(		SELECT *,
+		CASE WHEN description ILIKE '%kill%' OR description ILIKE '%violence%' THEN 'Bad'
+		ELSE 'Good'
+		END AS label
+FROM netflix
+)
+SELECT label, COUNT(*)
+FROM label_data
+GROUP BY 1
+```
 ---
 
 ## 💡 SQL Concepts Demonstrated
-
 This project covers several important PostgreSQL and SQL concepts:
 
 ### Basic SQL
@@ -186,7 +260,6 @@ This project covers several important PostgreSQL and SQL concepts:
 ---
 
 ## 📈 Key Skills Demonstrated
-
 This project demonstrates practical experience in:
 
 * SQL Query Development
@@ -238,3 +311,7 @@ B.Tech – Computer Science & Engineering
 This project showcases how SQL can be used to convert raw Netflix data into meaningful insights by solving practical business questions.
 
 The project is particularly focused on **analytical SQL and PostgreSQL**.
+---
+
+## Connect with me
+* **LinkedIn** : [Erum Mansoori](https://www.linkedin.com/in/erum-mansoori/)

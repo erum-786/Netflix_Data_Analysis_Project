@@ -1,5 +1,5 @@
 # 🎬 Netflix_Data_Analysis_Project
-<img src= "https://upload.wikimedia.org/wikipedia/commons/f/fd/Netflix-Logo.png?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original" height="255" width = "1000">
+<img src= "https://upload.wikimedia.org/wikipedia/commons/f/fd/Netflix-Logo.png?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original" height="260" width = "1000">
 
 ## 📌 Project Overview
 
@@ -280,16 +280,19 @@ This project demonstrates practical experience in:
 ## 📁 Project Files
 
 ```text
-Netflix-SQL-Analysis/
+Netflix_Data_Analysis_Project/
 │
 ├── README.md
 │
 ├── netflix_titles.csv
 |
-├── Netflix SQL Project.sql
+├── Business Problems netflix.sql
 │
 └── screenshots/
-    └── query-results.png
+    └── Average content release by india on Netflix.jpg
+	└── movie in which Salman khan appeared in last 15 years.jpg
+	└── top 10 actors appeared in highest number of movies in India.jpg
+	└── top 5 country having most content on Netflix.jpg
 ```
 
 ---
@@ -308,9 +311,10 @@ B.Tech – Computer Science & Engineering
 
 ## ⭐ Project Highlights
 
-This project showcases how SQL can be used to convert raw Netflix data into meaningful insights by solving practical business questions.
+This project showcases how SQL can be used to convert raw Netflix data into meaningful insights by solving practical business questions. 
 
 The project is particularly focused on **analytical SQL and PostgreSQL**.
+
 ---
 
 ## Connect with me
